@@ -1,0 +1,42 @@
+services:
+  blinkbridge:
+    image: blinkbridge:local
+    container_name: blinkbridge
+    volumes:
+      - "./blinkbridge/config:/config"
+      # path for temporary files (video clips, concat files, etc.)
+      - /tmp/blinkbridge:/working
+      # use below instead to use RAM instead of disk for temporary files
+      - type: tmpfs
+        target: /working
+        tmpfs:
+          size: 1073741824  #  1GB
+    tty: true # for color logs
+    environment:
+      - BLINKBRIDGE_CONFIG=/config/config.json
+    command: python -m blinkbridge
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep -v grep | grep -q ffmpeg || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+  mediamtx:
+    image: bluenviron/mediamtx
+    container_name: mediamtx
+    healthcheck:
+      test: ["CMD", "sh", "-c", "exec 3<>/dev/tcp/127.0.0.1/8554 || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    ports:
+      - 8554:8554
+
+networks:
+  default:
+    name: camstack
+
+
+volumes:
+  caddy_data:
+  caddy_config:

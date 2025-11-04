@@ -1,0 +1,5 @@
+blinkbridge/config/config.json
+blinkbridge/config/.cred.json
+pycache/
+*.pyc
+.DS_Store

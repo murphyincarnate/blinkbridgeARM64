@@ -1,0 +1,4 @@
+blinkbridge/config/config.json
+blinkbridge/config/.cred.json
+pycache/
+
